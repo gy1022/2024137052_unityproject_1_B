@@ -7,11 +7,20 @@ public class CircleObject : MonoBehaviour
     public bool isDrag;                 //드래그 중인지 판단하는 bool
     public bool isUsed;                 //사용완료 판단하는 bool
     Rigidbody2D rigidbody2D;            //2D 강체를 불러온다
+
+    public int index;                   //과일 번호를 만든다
+
+    void Awake()
+    {
+        isUsed = false;                                 //사용 완료가 되지 않음9처음 사용)
+        rigidbody2D = GetComponent<Rigidbody2D>();      //강체를 가져온다
+        rigidbody2D.simulated = false;                  //생성될 때는 시뮬레이팅 되지 않는다.
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        isUsed = false;                 //사용 완료가 되지않음
-        rigidbody2D = GetComponent<Rigidbody2D>();          //강체를 가져온다
+       
     }
 
     // Update is called once per frame
@@ -55,4 +64,36 @@ public class CircleObject : MonoBehaviour
         }
     }
 
+    public void Used()
+    {
+        isDrag = false;             //드래그가 종료
+        isUsed = true;              //사용이 완료
+        rigidbody2D.simulated = true;       //물리 현상 시작
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (index >= 7)                 //준비된 과일이 최대 7개
+            return;
+
+        if (collision.gameObject.tag == "Fruit")
+        { 
+            CircleObject temp = collision.gameObject.GetComponent<CircleObject>();
+
+            if(temp.index == index)
+            {
+                if(gameObject.GetInstanceID() > collision.gameObject.GetInstanceID())
+                {
+                    GameObject Temp = GameObject.FindWithTag("GameManager");
+                    if (Temp != null)
+                    {
+                        Temp.gameObject.GetComponent<GameManager>().MergeObject(index , gameObject.transform.position);
+                    }
+
+                    Destroy(temp.gameObject);
+                    Destroy(gameObject);                    
+                }
+            }
+        }
+    }
 }
