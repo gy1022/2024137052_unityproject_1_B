@@ -10,17 +10,23 @@ public class CircleObject : MonoBehaviour
 
     public int index;                   //과일 번호를 만든다
 
+    public float EndTime = 0.0f;
+    public SpriteRenderer SpriteRenderer;
+
+    public GameManager gameManager;
+
     void Awake()
     {
         isUsed = false;                                 //사용 완료가 되지 않음9처음 사용)
         rigidbody2D = GetComponent<Rigidbody2D>();      //강체를 가져온다
         rigidbody2D.simulated = false;                  //생성될 때는 시뮬레이팅 되지 않는다.
+        SpriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-       
+        gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
@@ -69,6 +75,32 @@ public class CircleObject : MonoBehaviour
         isDrag = false;             //드래그가 종료
         isUsed = true;              //사용이 완료
         rigidbody2D.simulated = true;       //물리 현상 시작
+    }
+
+    public void OnTriggerStay2D(Collider2D collision)
+    {
+        if(collision.tag == "End_Line")
+        {
+            EndTime += Time.deltaTime;
+
+            if(EndTime > 1)
+            {
+                SpriteRenderer.color = new Color(0.9f, 0.2f, 0.2f);
+            }
+            if(EndTime > 3)
+            {
+                gameManager.EndGame();
+            }
+        }
+    }
+
+    public void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "End_Line")
+        {
+            EndTime = 0.0f;
+            SpriteRenderer.color = Color.white;
+        }
     }
 
     public void OnCollisionEnter2D(Collision2D collision)

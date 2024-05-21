@@ -129,6 +129,9 @@ MonoBehaviour:
   isDrag: 0
   isUsed: 0
   index: 4
+  EndTime: 0
+  SpriteRenderer: {fileID: 0}
+  gameManager: {fileID: 0}
 --- !u!58 &7357376357527070399
 CircleCollider2D:
   m_ObjectHideFlags: 0
